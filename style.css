@@ -1,0 +1,106 @@
+.audio-container {
+    width: 400px;
+    box-shadow: -5px 5px 10px -5px ;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.audio-container-hidden {
+    width: 400px;
+    box-shadow: -5px 5px 10px -5px ;
+    border-radius: 10px;
+    display: none;
+}
+
+.audio-container #waveform {
+    background: #eee;
+    width: 400px;
+    overflow-y: auto;
+}
+
+.audio-container .btn {
+    padding: 10px;
+    width: 24px;
+    cursor: pointer;
+    display: inline-block;
+}
+        /*PLAY PAUSE*/ 
+.audio-container .buttons .play-btn .fa-circle-pause {
+    display: none;
+}
+
+.audio-container .buttons .play-btn.playing .fa-circle-pause {
+    display: inline-block;
+}
+
+.audio-container .buttons .play-btn.playing .fa-circle-play {
+    display: none;
+}
+        /*MUTE UNMUTE*/
+.audio-container .buttons .mute-btn .fa-volume-off {
+    display: none;
+}
+
+.audio-container .buttons .mute-btn.muted .fa-volume-off {
+    display: inline-block;
+}
+
+.audio-container .buttons .mute-btn.muted .fa-volume-high {
+    display: none;
+}
+        /*LOOP*/
+.audio-container .buttons .loop-btn #spin {
+    display: none;
+}
+
+.audio-container .buttons .loop-btn.looped #spin {
+    display: inline-block;
+}
+
+.audio-container .buttons .loop-btn.looped #still {
+    display: none;
+}
+
+.inline-group .form-control {
+    text-align: middle;
+    max-width: 1rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+#number {
+    width: 2em;
+    text-align: center;
+}
+
+.nav {
+    display: flex;
+}
+
+#sample {
+    background-color: aqua;
+}
+
+#edit {
+    background-color: aquamarine;
+}
+
+.sample-screen {
+    display: inline;
+}
+
+.sample-screen-hidden {
+    display: none;
+}
+
+#record {
+    background-color: lightcoral;
+}
+
+#stop_record {
+    background-color: lightskyblue;
+}
