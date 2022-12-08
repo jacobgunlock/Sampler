@@ -102,10 +102,10 @@ document.querySelector('#zslider').oninput = function () {
 
 
 //Pitch
-var value = parseInt(document.getElementById('number').value);
+let value = parseInt(document.getElementById('number').value);
 i = wavesurfer.getPlaybackRate();
-function incrementValue()
-{
+
+plusbtn.addEventListener("click", () => {
     value = isNaN(value) ? 0 : value;
     if (value < 12) {
         value++;
@@ -113,10 +113,9 @@ function incrementValue()
         i = i+(0.04166666666);
         wavesurfer.setPlaybackRate(i);
     } 
-}
+})
 
-function decrementValue()
-{
+minusbtn.addEventListener("click", () => {
     value = isNaN(value) ? 0 : value;
     if (value > -12) {
         value--;
@@ -124,14 +123,6 @@ function decrementValue()
         i = i-(0.04166666666);
         wavesurfer.setPlaybackRate(i);
     }
-}
-
-plusbtn.addEventListener("click", () => {
-    incrementValue();
-})
-
-minusbtn.addEventListener("click", () => {
-    decrementValue();
 })
 
 edit.addEventListener("click", () => {
@@ -139,6 +130,7 @@ edit.addEventListener("click", () => {
     audioContainer.classList.remove("audio-container-hidden");
     sampleScreen.classList.add("sample-screen-hidden");
     sampleScreen.classList.remove("sample-screen");
+    wavesurfer.load(song);
 })
 
 sample.addEventListener("click", () => {
@@ -149,54 +141,46 @@ sample.addEventListener("click", () => {
     playbtn.classList.remove("playing");
 })
 
-if (navigator.mediaDevices.getUserMedia) {
-    const constraints = { audio: true };
-    let chunks = [];
-    let onSuccess = function(stream) {
-      const mediaRecorder = new MediaRecorder(stream);
-  
-      record.addEventListener("click", () => {
-        mediaRecorder.start();
-        record.style.background = "red";
-        console.log("clicked");
-      })
-  
-      stop.onclick = function() {
-        mediaRecorder.stop();
 
-      }
-  
-      mediaRecorder.onstop = function(e) {
-        const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-        chunks = [];
-        const audioURL = window.URL.createObjectURL(blob);
-      }
-      mediaRecorder.ondataavailable = function(e) {
-        chunks.push(e.data);
-      }
-    }
-    let onError = function(err) {}
-    navigator.mediaDevices.getUserMedia(constraints).then(onSuccess, onError);
-}
-    
+record.addEventListener("click", () => {
+    captureTabAudio();
+    record.style.backgroundColor = 'red';
+})
+
 stop.addEventListener("mousedown", () => {
     stop_record.style.backgroundColor = "blue";
 })
-    
+
 stop.addEventListener("mouseup", () => {
     stop_record.style.backgroundColor = "lightskyblue";
 })
 
-function getLocalStream() {
-    navigator.mediaDevices
-      .getUserMedia({ video: false, audio: true })
-      .then((stream) => {
-        window.localStream = stream; // A
-        window.localAudio.srcObject = stream; // B
-        window.localAudio.autoplay = true; // C
-      })
-      .catch((err) => {
-        console.error(`you got an error: ${err}`);
-      });
-  }
-    
+function saveToFile(blob, name) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href = url;
+    a.download = name;
+    a.click();
+    URL.revokeObjectURL(url);
+    a.remove();
+}
+function captureTabAudio() {
+    chrome.tabCapture.capture({audio: true, video: false}, (stream) => {
+
+        // these lines enable the audio to continue playing while capturing
+        context = new AudioContext();
+        var newStream = context.createMediaStreamSource(stream);
+        newStream.connect(context.destination);
+
+        const recorder = new MediaRecorder(stream);
+        const chunks = [];
+        recorder.ondataavailable = (e) => {
+            chunks.push(e.data);
+        };
+        recorder.onstop = (e) => saveToFile(new Blob(chunks), "test.wav");
+        recorder.start();
+        setTimeout(() => recorder.stop(), 5000);
+    })
+}
